@@ -139,7 +139,7 @@ class CarritoScreen extends React.Component {
     } else if (newData[itemIndex].cantidad > 1) {
       newData[itemIndex].cantidad = item.cantidad - 1
     } else {
-      newData = newData.filter((x, index, y) => {return index != itemIndex;});
+      newData = newData.filter((x, index, y) => { return index != itemIndex; });
     }
 
     this.setState({
@@ -203,7 +203,9 @@ class CarritoScreen extends React.Component {
                 fontWeight: 'bold',
                 textAlign: 'center',
               }}
-            >{"Pagar"}</Text>
+            >
+              {"Pagar"}
+            </Text>
           </TouchableOpacity>
 
         </View>
