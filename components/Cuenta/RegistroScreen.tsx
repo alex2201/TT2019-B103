@@ -5,14 +5,55 @@ import GlobalStyles from '../GlobalStyles';
 import PrimaryButton from '../PrimaryButton';
 import { Picker } from '@react-native-picker/picker';
 import SecondaryButton from '../SecondaryButton';
+import DatePicker from 'react-native-datepicker'
+import Socio from '../../model/Socio';
+import DateDiff from '../Utils';
+import moment from 'react-native-datepicker/node_modules/moment';
 
 class RegistroScreen extends Component {
 
     state = {
         correo: "",
+        correoConfirmacion: "",
         clave: "",
         sexo: "M",
+        fecha: "22-01-1996",
+        nombre: '',
+        apPaterno: '',
+        apMaterno: '',
     };
+
+    enviarRegistro() {
+        let fechaActual = new Date()
+        let fechaNacimiento = moment(this.state.fecha, "DD-MM-YYYY").toDate()
+        console.log(fechaNacimiento)
+        let edad = DateDiff.inYears(fechaNacimiento, fechaActual)
+        var socio = new Socio(
+            this.state.apPaterno,
+            this.state.apMaterno,
+            this.state.nombre,
+            edad,
+            this.state.sexo,
+            this.state.correo,
+            this.state.clave
+        );
+        this.registrar(socio)
+    }
+
+    async registrar(socio: Socio) {
+        console.log(socio)
+        const rawResponse = await fetch("http://189.171.102.185:4356/register", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(socio)
+        });
+        const content = await rawResponse.json();
+        console.log('content');
+        console.log(content);
+    }
 
     render() {
         return (
@@ -49,38 +90,56 @@ class RegistroScreen extends Component {
                             style={styles.textField}
                             keyboardType={'default'}
                             placeholder={'Nombre'}
-                            value={this.state.correo}
-                            onChangeText={(text) => { this.setState({ correo: text }) }}
+                            value={this.state.nombre}
+                            onChangeText={(text) => { this.setState({ nombre: text }) }}
                         />
                         <TextInput
                             style={styles.textField}
                             keyboardType={'default'}
                             placeholder={'Apellido Paterno'}
-                            value={this.state.correo}
-                            onChangeText={(text) => { this.setState({ correo: text }) }}
+                            value={this.state.apPaterno}
+                            onChangeText={(text) => { this.setState({ apPaterno: text }) }}
                         />
                         <TextInput
                             style={styles.textField}
                             keyboardType={'default'}
                             placeholder={'Apellido Materno'}
-                            value={this.state.correo}
-                            onChangeText={(text) => { this.setState({ correo: text }) }}
+                            value={this.state.apMaterno}
+                            onChangeText={(text) => { this.setState({ apMaterno: text }) }}
                         />
                         <TextInput
                             style={styles.textField}
-                            keyboardType={'default'}
+                            keyboardType={'email-address'}
                             placeholder={'Correo'}
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
                             value={this.state.correo}
                             onChangeText={(text) => { this.setState({ correo: text }) }}
                         />
                         <TextInput
                             style={styles.textField}
-                            keyboardType={'default'}
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
+                            keyboardType={'email-address'}
                             placeholder={'Confirma Correo'}
-                            value={this.state.correo}
-                            onChangeText={(text) => { this.setState({ correo: text }) }}
+                            value={this.state.correoConfirmacion}
+                            onChangeText={(text) => { this.setState({ correoConfirmacion: text }) }}
+                        />
+                        <TextInput
+                            style={styles.textField}
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
+                            keyboardType={'default'}
+                            placeholder={'Clave'}
+                            value={this.state.clave}
+                            onChangeText={(text) => { this.setState({ clave: text }) }}
                         />
 
+                        <Text
+                            style={styles.label}
+                        >
+                            {"Sexo:"}
+                        </Text>
                         <Picker
                             selectedValue={this.state.sexo}
                             style={{
@@ -95,6 +154,30 @@ class RegistroScreen extends Component {
                             <Picker.Item label="Hombre" value="M" />
                             <Picker.Item label="Mujer" value="F" />
                         </Picker>
+
+                        <DatePicker
+                            style={{ width: "100%" }}
+                            date={this.state.fecha}
+                            mode="date"
+                            placeholder="Fecha de nacimiento"
+                            format="DD-MM-YYYY"
+                            minDate="01-01-1950 "
+                            maxDate="30-12-2020"
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    left: 0,
+                                    top: 4,
+                                    marginLeft: 0
+                                },
+                                dateInput: {
+                                    marginLeft: 36
+                                }
+                            }}
+                            onDateChange={(fecha) => { this.setState({ fecha: fecha }) }}
+                        />
 
                     </View>
                 </View>
@@ -114,7 +197,7 @@ class RegistroScreen extends Component {
                             marginRight: 40,
                         }}
                         text={"Registrarme"}
-                        onPress={() => { }}
+                        onPress={() => { this.enviarRegistro() }}
                     />
                     <SecondaryButton
                         style={{
@@ -140,6 +223,13 @@ const styles = StyleSheet.create({
         fontSize: 17,
         padding: 10,
         margin: 5,
+    },
+    label: {
+        width: '100%',
+        height: 40,
+        fontSize: 17,
+        paddingTop: 10,
+        paddingBottom: 10,
     }
 });
 

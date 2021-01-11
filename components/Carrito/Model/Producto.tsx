@@ -1,14 +1,25 @@
 class Producto {
-    id: string;
+    idProducto: string;
     nombre: string;
+    marca: string;
     cantidad: number;
-    precio: number;
+    precioUnitario: number;
+    idSubCat: number;
 
-    constructor(id: string, nombre: string, cantidad: number, precio: number) {
-        this.id = id;
+    constructor(
+        idProducto: string,
+        nombre: string,
+        cantidad: number,
+        precioUnitario: number,
+        idSubCat: number,
+        marca: string
+    ) {
+        this.idProducto = idProducto;
         this.nombre = nombre;
         this.cantidad = cantidad;
-        this.precio = precio;
+        this.precioUnitario = precioUnitario;
+        this.idSubCat = idSubCat;
+        this.marca = marca;
     }
 };
 

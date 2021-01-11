@@ -12,10 +12,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Producto from './Model/Producto';
 
 let productosPrueba: Producto[] = [
-  new Producto("1", "Producto 1", 1, 50.50),
-  new Producto("2", "Producto 2", 1, 200.48),
-  new Producto("3", "Producto 3", 1, 10.98),
-  new Producto("4", "Producto 4", 1, 0.58),
+  new Producto("1", "Producto 1", 1, 50.50, 23, "Generica"),
+  new Producto("2", "Producto 2", 1, 200.48, 23, "Generica"),
+  new Producto("3", "Producto 3", 1, 10.98, 23, "Generica"),
+  new Producto("4", "Producto 4", 1, 0.58, 23, "Generica"),
 ];
 
 class CarritoScreen extends React.Component {
@@ -92,8 +92,8 @@ class CarritoScreen extends React.Component {
           }}
         >
           <Text style={this.styles.titulo}>{item.nombre}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Código: ${item.id}`}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Precio: $${item.precio.toFixed(2)} MXN`}</Text>
+          <Text style={{ marginBottom: 5 }}>{`Código: ${item.idProducto}`}</Text>
+          <Text style={{ marginBottom: 5 }}>{`Precio: $${item.precioUnitario.toFixed(2)} MXN`}</Text>
           <View
             style={{
               marginTop: 5,
@@ -150,7 +150,7 @@ class CarritoScreen extends React.Component {
   render() {
 
     let totalCompra = this.state.data
-      .map((item) => { return item.cantidad * item.precio })
+      .map((item) => { return item.cantidad * item.precioUnitario })
       .reduce((prevValue, currentValue, _) => { return prevValue + currentValue })
       .toFixed(2);
 
@@ -163,7 +163,7 @@ class CarritoScreen extends React.Component {
         <FlatList
           data={this.state.data}
           renderItem={item => this.renderItemComponent(item.item)}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.idProducto}
           ItemSeparatorComponent={this.ItemSeparator}
         />
 
