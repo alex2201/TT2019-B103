@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import GlobalStyles from '../GlobalStyles';
 import PrimaryButton from '../PrimaryButton';
@@ -8,7 +8,9 @@ import SecondaryButton from '../SecondaryButton';
 import DatePicker from 'react-native-datepicker'
 import Socio from '../../model/Socio';
 import DateDiff from '../Utils';
-import moment from 'react-native-datepicker/node_modules/moment';
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppInternalStorageKey from '../AppInternalStorageKey';
 
 class RegistroScreen extends Component {
 
@@ -26,7 +28,6 @@ class RegistroScreen extends Component {
     enviarRegistro() {
         let fechaActual = new Date()
         let fechaNacimiento = moment(this.state.fecha, "DD-MM-YYYY").toDate()
-        console.log(fechaNacimiento)
         let edad = DateDiff.inYears(fechaNacimiento, fechaActual)
         var socio = new Socio(
             this.state.apPaterno,
@@ -41,7 +42,6 @@ class RegistroScreen extends Component {
     }
 
     async registrar(socio: Socio) {
-        console.log(socio)
         const rawResponse = await fetch("http://189.171.102.185:4356/register", {
             method: 'POST',
             headers: {
@@ -51,8 +51,22 @@ class RegistroScreen extends Component {
             body: JSON.stringify(socio)
         });
         const content = await rawResponse.json();
-        console.log('content');
-        console.log(content);
+        if (content.success === true) {
+            let socio: Socio = content.socio.socio as Socio
+            this.guardarSocio(socio)
+            this.props.navigation.navigate('Cuenta', {}) 
+        } else {
+            let mensaje =
+                content.email_used
+                    ? "Ya existe una cuenta asociada al correo que usaste."
+                    : "Ocurrió un error al registrarte."
+            Alert.alert("Aviso", mensaje)
+        }
+    }
+
+    async guardarSocio(socio: Socio) {
+        let key = AppInternalStorageKey.cuenta;
+        await AsyncStorage.setItem(key, JSON.stringify(socio))
     }
 
     render() {
@@ -205,7 +219,7 @@ class RegistroScreen extends Component {
                             marginRight: 40,
                         }}
                         text={"Cancelar"}
-                        onPress={() => { }}
+                        onPress={() => { this.props.navigation.goBack() }}
                     />
                 </View>
             </View>
