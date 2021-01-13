@@ -5,6 +5,7 @@ import AppInternalStorageKey from '../AppInternalStorageKey';
 import PrimaryButton from '../PrimaryButton';
 import SecondaryButton from '../SecondaryButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BaseUrl from '../BaseUrl';
 
 class InicioSesionScreen extends Component {
 
@@ -19,7 +20,7 @@ class InicioSesionScreen extends Component {
     }
 
     async iniciarSesion(correo: string, clave: string) {
-        const rawResponse = await fetch("http://189.171.102.185:4356/login", {
+        const rawResponse = await fetch(`${BaseUrl}:4356/login`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -72,15 +73,20 @@ class InicioSesionScreen extends Component {
                 >
                     <TextInput
                         style={styles.textField}
-                        keyboardType={'default'}
+                        keyboardType={'email-address'}
                         placeholder={'Correo'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
                         value={this.state.correo}
                         onChangeText={(text) => { this.setState({ correo: text }) }}
                     />
                     <TextInput
                         style={styles.textField}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
                         keyboardType={'default'}
                         placeholder={'Clave'}
+                        secureTextEntry={true}
                         value={this.state.clave}
                         onChangeText={(text) => { this.setState({ clave: text }) }}
                     />

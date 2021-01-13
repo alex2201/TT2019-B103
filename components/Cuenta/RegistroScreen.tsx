@@ -11,6 +11,7 @@ import DateDiff from '../Utils';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppInternalStorageKey from '../AppInternalStorageKey';
+import BaseUrl from '../BaseUrl';
 
 class RegistroScreen extends Component {
 
@@ -42,7 +43,7 @@ class RegistroScreen extends Component {
     }
 
     async registrar(socio: Socio) {
-        const rawResponse = await fetch("http://189.171.102.185:4356/register", {
+        const rawResponse = await fetch(`${BaseUrl}/register`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -145,6 +146,7 @@ class RegistroScreen extends Component {
                             autoCorrect={false}
                             keyboardType={'default'}
                             placeholder={'Clave'}
+                            secureTextEntry={true}
                             value={this.state.clave}
                             onChangeText={(text) => { this.setState({ clave: text }) }}
                         />
