@@ -4,10 +4,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import CarritoScreen from './CarritoScreen';
 import BarCodeScanner from './BarCodeScanner';
+import Globals from '../Globals';
 
 const Stack = createStackNavigator();
 
-function CarritoNavigation() {
+function CarritoNavigation(props: any) {
+  Globals.goToMapa = () => {props.navigation.navigate('Mapa', {})}
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName={'Home'}>

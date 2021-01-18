@@ -12,6 +12,7 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppInternalStorageKey from '../AppInternalStorageKey';
 import BaseUrl from '../BaseUrl';
+import Globals from '../Globals';
 
 class RegistroScreen extends Component {
 
@@ -37,7 +38,8 @@ class RegistroScreen extends Component {
             edad,
             this.state.sexo,
             this.state.correo,
-            this.state.clave
+            this.state.clave,
+            ""
         );
         this.registrar(socio)
     }
@@ -55,7 +57,9 @@ class RegistroScreen extends Component {
         if (content.success === true) {
             let socio: Socio = content.socio.socio as Socio
             this.guardarSocio(socio)
-            this.props.navigation.navigate('Cuenta', {}) 
+            if (Globals.setSocio !== null) {
+                Globals.setSocio(socio)
+            }
         } else {
             let mensaje =
                 content.email_used

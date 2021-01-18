@@ -6,6 +6,7 @@ import PrimaryButton from '../PrimaryButton';
 import SecondaryButton from '../SecondaryButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BaseUrl from '../BaseUrl';
+import Globals from '../Globals';
 
 class InicioSesionScreen extends Component {
 
@@ -20,20 +21,25 @@ class InicioSesionScreen extends Component {
     }
 
     async iniciarSesion(correo: string, clave: string) {
-        const rawResponse = await fetch(`${BaseUrl}:4356/login`, {
+        console.log("Loggin in...")
+        let request = {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email: correo, passwd: clave })
-        });
+        };
+        const rawResponse = await fetch(`${BaseUrl}/login`, request);
+        console.log(rawResponse)
         const content = await rawResponse.json();
         console.log(content)
         if (content.ok === true) {
             let socio: Socio = content.socio as Socio
             this.guardarSocio(socio)
-            this.props.navigation.navigate('Cuenta', {}) 
+            if (Globals.setSocio !== null) {
+                Globals.setSocio(socio)
+            }
         }
     }
 

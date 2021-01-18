@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import RegistroScreen from './RegistroScreen';
 import InicioSesionScreen from './InicioSesionScreen';
-import CuentaScreen from '../Cuenta';
+import CuentaScreen from './CuentaScreen';
 import { NavigationContainer } from '@react-navigation/native';
 
 const Stack = createStackNavigator();
@@ -12,7 +12,7 @@ class CuentaNavigation extends React.Component {
   render() {
     return (
       <NavigationContainer independent={true}>
-        <Stack.Navigator initialRouteName={"Cuenta"} headerMode={"none"}>
+        <Stack.Navigator initialRouteName={"InicioSesion"} headerMode={"none"}>
           <Stack.Screen name="InicioSesion" component={InicioSesionScreen} options={{ title: 'InicioSesion', gestureEnabled: false, }} />
           <Stack.Screen name="Registro" component={RegistroScreen} options={{ title: 'Registro', gestureEnabled: false, }} />
           <Stack.Screen name="Cuenta" component={CuentaScreen} options={{ title: 'InicioSesion', gestureEnabled: false, }} />
