@@ -15,7 +15,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppInternalStorageKey from './components/AppInternalStorageKey';
-import CuentaNavigation from './components/Cuenta/CuentaNavigation';
+import InicioSesionNavigation from './components/Cuenta/InicioSesionNavigation';
 import Globals from './components/Globals';
 import TabBarPrincipal from './components/TabBarController/TabBarPrincipal';
 import Socio from './model/Socio';
@@ -67,7 +67,7 @@ class App extends Component<any, { socio: Socio | null }> {
           {
             !haySocio
             &&
-            <CuentaNavigation />
+            <InicioSesionNavigation />
           }
         </SafeAreaView>
       </>

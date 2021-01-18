@@ -69,7 +69,6 @@ class CarritoScreen extends React.Component<any, {
   async obtenerRecomendaciones() {
     console.log("Obteniendo recomendaciones...")
     let socio = Globals.socio
-    console.log(socio)
     if (socio !== null) {
       let idSocio = socio.idSocio
       let request = {
@@ -81,7 +80,6 @@ class CarritoScreen extends React.Component<any, {
         body: JSON.stringify({ uid: idSocio })
       };
       const rawResponse = await fetch(`${BaseUrl}/get_recs`, request);
-      console.log(rawResponse)
       const content = await rawResponse.json();
       let recomendaciones = content.productsInfo.productsInfo as Producto[]
       this.setState({ recomendaciones: recomendaciones })
@@ -176,7 +174,6 @@ class CarritoScreen extends React.Component<any, {
           height: 150,
           width: '100%',
           display: 'flex',
-          justifyContent: 'center',
           flexDirection: 'row',
           padding: 10,
         }}

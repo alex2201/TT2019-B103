@@ -5,8 +5,7 @@ import CarritoNavigation from '../Carrito/CarritoNavigation';
 import { Mapa } from '../Mapa';
 import { Promociones } from '../Promociones';
 import Icon from 'react-native-vector-icons/Ionicons';
-import CuentaScreen from '../Cuenta/CuentaScreen';
-import Globals from '../Globals';
+import CuentaNavigation from '../Cuenta/CuentaNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,7 +38,7 @@ export default function TabBarPrincipal() {
         <Tab.Screen name="Carrito" component={CarritoNavigation} />
         <Tab.Screen name="Promociones" component={Promociones} />
         <Tab.Screen name="Mapa" component={Mapa} />
-        <Tab.Screen name="Cuenta" component={CuentaScreen} />
+        <Tab.Screen name="Cuenta" component={CuentaNavigation} />
       </Tab.Navigator>
     </NavigationContainer>
   );
