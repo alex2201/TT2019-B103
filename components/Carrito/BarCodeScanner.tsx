@@ -35,8 +35,9 @@ class BarCodeScanner extends React.Component<any, {debeMostrarCamara: boolean}> 
     }
 
     async obtenerInformacionProducto(codigo: string) {
+        console.log("Obteniendo información del producto...", codigo)
         let request = {
-            method: 'GET',
+            method: 'POST',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
@@ -44,8 +45,8 @@ class BarCodeScanner extends React.Component<any, {debeMostrarCamara: boolean}> 
             body: JSON.stringify({ idProducto: codigo })
           };
           const rawResponse = await fetch(`${BaseUrl}/get_product_info`, request);
-          console.log(rawResponse)
           const content = await rawResponse.json();
+          console.log(content)
     }
 
     render() {
