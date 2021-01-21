@@ -60,7 +60,12 @@ class CuentaScreen extends Component<any, { socio: Socio | null }> {
           {
             socio !== null
             &&
-            <View>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <Text
                 style={styles.label}
               >

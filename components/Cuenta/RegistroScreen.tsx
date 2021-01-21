@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppInternalStorageKey from '../AppInternalStorageKey';
 import BaseUrl from '../BaseUrl';
 import Globals from '../Globals';
+import CheckBox from '@react-native-community/checkbox';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class RegistroScreen extends Component {
 
@@ -23,23 +25,28 @@ class RegistroScreen extends Component {
         nombre: '',
         apPaterno: '',
         apMaterno: '',
+        aceptaTerminos: false,
     };
 
     enviarRegistro() {
-        let fechaActual = new Date()
-        let fechaNacimiento = moment(this.state.fecha, "DD-MM-YYYY").toDate()
-        let edad = DateDiff.inYears(fechaNacimiento, fechaActual)
-        var socio = new Socio(
-            this.state.apPaterno,
-            this.state.apMaterno,
-            this.state.nombre,
-            edad,
-            this.state.sexo,
-            this.state.correo,
-            this.state.clave,
-            ""
-        );
-        this.registrar(socio)
+        if (this.state.aceptaTerminos) {
+            let fechaActual = new Date()
+            let fechaNacimiento = moment(this.state.fecha, "DD-MM-YYYY").toDate()
+            let edad = DateDiff.inYears(fechaNacimiento, fechaActual)
+            var socio = new Socio(
+                this.state.apPaterno,
+                this.state.apMaterno,
+                this.state.nombre,
+                edad,
+                this.state.sexo,
+                this.state.correo,
+                this.state.clave,
+                ""
+            );
+            this.registrar(socio)
+        } else {
+            Alert.alert("Aviso", "Debe aceptar los términos y condiciones de uso para poder continuar.")
+        }
     }
 
     async registrar(socio: Socio) {
@@ -196,6 +203,36 @@ class RegistroScreen extends Component {
                             }}
                             onDateChange={(fecha) => { this.setState({ fecha: fecha }) }}
                         />
+
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                margin: 16,
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+
+                            <CheckBox
+                                disabled={false}
+                                value={this.state.aceptaTerminos}
+                                onValueChange={(newValue) => this.setState({ aceptaTerminos: newValue })}
+                                style={{
+                                    marginRight: 16,
+                                }}
+                                tintColors={{ true: 'black', false: 'lightgray' }}
+                                tintColor={'lightgray'}
+                                onTintColor={'black'}
+                            />
+                            <TouchableOpacity>
+                                <Text
+                                    style={{
+                                        color: 'red'
+                                    }}
+                                >{'Terminos y condiciones de uso'}</Text>
+                            </TouchableOpacity>
+
+                        </View>
 
                     </View>
                 </View>
