@@ -5,8 +5,9 @@ import Globals from '../Globals';
 import Compra from './Model/Compra';
 import { WebView } from 'react-native-webview';
 
+
 class HTMLScreen extends Component<any, {
-    html: string,
+    ticketurl: string,
     compra: Compra
 }> {
 
@@ -15,7 +16,7 @@ class HTMLScreen extends Component<any, {
         let compra = props.route.params.compra as Compra
         this.state = {
             compra: compra,
-            html: ""
+            ticketurl: ""
         }
     }
 
@@ -25,7 +26,7 @@ class HTMLScreen extends Component<any, {
 
     async obtenerHtml() {
         let idSocio = Globals.socio!.idSocio
-        console.log("Obteniendo html", idSocio)
+        console.log("Obteniendo PDF", idSocio, this.state.compra)
         let request = {
             method: 'POST',
             headers: {
@@ -34,23 +35,23 @@ class HTMLScreen extends Component<any, {
             },
             body: JSON.stringify({ idSocio: idSocio, fecha_hora: this.state.compra.fecha, idProducto: '' })
         };
-        const rawResponse = await fetch(`${BaseUrl}/api/v1/receipt/`, request);
-        let html = await rawResponse.text()
-        this.setState({html: html})
-        console.log('Html obtenido con éxito...')
+        const rawResponse = await fetch(`${BaseUrl}/api/v1/receipt2/`, request);
+        let content = await rawResponse.json()
+        this.setState({ticketurl: content.Ticket})
+        console.log('PDF obtenido con éxito...')
     }
 
     render() {
-        let html = this.state.html
+        let html = this.state.ticketurl
         return (
             <View
             style={{
                 height: '100%',
-                
+
             }}
             >
                     <WebView
-                    source={{html: html}}
+                    source={{uri: this.state.ticketurl}}
                     >
 
                     </WebView>
