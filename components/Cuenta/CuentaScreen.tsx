@@ -11,10 +11,10 @@ import PrimaryButton from '../PrimaryButton';
 
 class CuentaScreen extends Component<any, { socio: Socio | null }> {
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.navigation.setOptions({
       headerLeft: () => (
-        <Button onPress={() => { this.props.navigation.navigate('BarCodeScanner', {}) }} title="Historial" />
+        <Button onPress={() => { this.props.navigation.navigate('Historial', {}) }} title="Historial" />
       ),
       headerRight: () => (
         <Button onPress={() => { this.props.navigation.navigate('EditarCuenta', {}) }} title="Editar" />
@@ -57,27 +57,32 @@ class CuentaScreen extends Component<any, { socio: Socio | null }> {
             size={100}
             color={'black'}
           />
-
-          <Text
-            style={styles.label}
-          >
-            {socio.nombre}
-          </Text>
-          <Text
-            style={styles.label}
-          >
-            {socio.apPaterno}
-          </Text>
-          <Text
-            style={styles.label}
-          >
-            {socio.apPaterno}
-          </Text>
-          <Text
-            style={styles.label}
-          >
-            {socio.email}
-          </Text>
+          {
+            socio !== null
+            &&
+            <View>
+              <Text
+                style={styles.label}
+              >
+                {socio.nombre}
+              </Text>
+              <Text
+                style={styles.label}
+              >
+                {socio.apPaterno}
+              </Text>
+              <Text
+                style={styles.label}
+              >
+                {socio.apPaterno}
+              </Text>
+              <Text
+                style={styles.label}
+              >
+                {socio.email}
+              </Text>
+            </View>
+          }
 
           <PrimaryButton
             text={"Cerrar sesión"}

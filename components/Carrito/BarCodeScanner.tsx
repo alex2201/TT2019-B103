@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Alert, Text, View } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import BaseUrl from '../BaseUrl';
+import Globals from '../Globals';
+import Producto from './Model/Producto';
 
-class BarCodeScanner extends React.Component<any, {debeMostrarCamara: boolean}> {
+class BarCodeScanner extends React.Component<any, { debeMostrarCamara: boolean }> {
 
     state = {
         debeMostrarCamara: true
@@ -17,19 +19,19 @@ class BarCodeScanner extends React.Component<any, {debeMostrarCamara: boolean}> 
             "Código encontrado",
             codigo,
             [
-                  {
+                {
                     text: 'Volver a escanear',
                     onPress: () => {
-                      this.setState({debeMostrarCamara: true})
+                        this.setState({ debeMostrarCamara: true })
                     }
-                  },
-                  {
+                },
+                {
                     text: 'Continuar',
                     onPress: () => {
                         this.obtenerInformacionProducto(codigo)
                     },
                     style: 'cancel'
-                  },
+                },
             ]
         );
     }
@@ -39,14 +41,24 @@ class BarCodeScanner extends React.Component<any, {debeMostrarCamara: boolean}> 
         let request = {
             method: 'POST',
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ idProducto: codigo })
-          };
-          const rawResponse = await fetch(`${BaseUrl}/get_product_info`, request);
-          const content = await rawResponse.json();
-          console.log(content)
+            body: JSON.stringify({ idProducto: codigo, idSocio: Globals.socio!.idSocio })
+        };
+        const rawResponse = await fetch(`${BaseUrl}/get_product_info`, request);
+        const content = await rawResponse.json();
+        if (content.ok === true) {
+            let item = content as Producto
+            console.log(item)
+            if (Globals.actualizarCarrito !== null) {
+                Globals.actualizarCarrito(item)
+                this.props.navigation.goBack()
+            }
+        } else {
+            Alert.alert("Aviso", "No se encontró el código de producto. Intente de nuevo o pida asistencia a un empleado.")
+            this.setState({ debeMostrarCamara: true })
+        }
     }
 
     render() {

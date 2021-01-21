@@ -5,13 +5,15 @@ class Producto {
     marca:          string;
     nombre:         string;
     precioUnitario: number;
+    valoracion: string;
     constructor(
         idProducto: string,
         nombre: string,
         precioUnitario: number,
         idSubCat: number,
         marca: string,
-        nombreSubCat: string
+        nombreSubCat: string,
+        valoracion: string
     ) {
         this.idProducto = idProducto;
         this.nombre = nombre;
@@ -19,6 +21,7 @@ class Producto {
         this.idSubCat = idSubCat;
         this.marca = marca;
         this.nombreSubCat = nombreSubCat;
+        this.valoracion = valoracion;
     }
 };
 

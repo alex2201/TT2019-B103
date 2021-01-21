@@ -1,6 +1,6 @@
 import SegmentedControl from '@react-native-community/segmented-control';
 import * as React from 'react';
-import { Alert } from 'react-native';
+import { Alert, KeyboardAvoidingView, Modal, Platform } from 'react-native';
 import {
   Text,
   View,
@@ -10,48 +10,77 @@ import {
   StyleSheet,
   Button,
 } from 'react-native';
+import CreditCard from 'react-native-credit-card-form-ui';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BaseUrl from '../BaseUrl';
 import Globals from '../Globals';
+import PrimaryButton from '../PrimaryButton';
+import SecondaryButton from '../SecondaryButton';
 import Producto from './Model/Producto';
 import ProductoCarrito from './Model/ProductoCarrito';
 
 let productosPrueba: ProductoCarrito[] = [
-  new ProductoCarrito(new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría"), 1),
-  new ProductoCarrito(new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría"), 1),
-  new ProductoCarrito(new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría"), 1),
+  new ProductoCarrito(new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "y"), 1),
+  new ProductoCarrito(new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "y"), 1),
+  new ProductoCarrito(new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n"), 1),
 ];
 let productosPendientesPrueba: Producto[] = [
-  new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría"),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría"),
-  new Producto("3", "Producto 3", 80.50, 23, "Generica", "Categoría"),
-  new Producto("8", "Producto 8", 150.50, 23, "Generica", "Categoría"),
+  new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("3", "Producto 3", 80.50, 23, "Generica", "Categoría", "n"),
+  new Producto("8", "Producto 8", 150.50, 23, "Generica", "Categoría", "n"),
 ];
 let productosRecomendacionesPrueba: Producto[] = [
-  new Producto("1", "Producto 1 con un nmbre largo", 50.50, 23, "Generica", "Categoría"),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría"),
-  new Producto("3", "Producto 3", 50.50, 23, "Generica", "Categoría"),
-  new Producto("4", "Producto 4", 50.50, 23, "Generica", "Categoría"),
-  new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría"),
+  new Producto("1", "Producto 1 con un nmbre largo", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("3", "Producto 3", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("4", "Producto 4", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n"),
 ];
 
 class CarritoScreen extends React.Component<any, {
-  data: ProductoCarrito[],
+  carrito: ProductoCarrito[],
   recomendaciones: Producto[],
   pendientes: Producto[],
-  selectedIndex: number
+  selectedIndex: number,
+  mostrarModalPago: boolean,
+  mostrarModalCalificar: boolean,
+  productoSeleccionado: Producto | null,
+  calificacion: number
 }> {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
-      data: new Array<ProductoCarrito>(),
+      carrito: new Array<ProductoCarrito>(),
       recomendaciones: new Array<Producto>(),
       pendientes: new Array<Producto>(),
       selectedIndex: 0,
+      mostrarModalPago: false,
+      mostrarModalCalificar: false,
+      productoSeleccionado: null,
+      calificacion: 0
     }
   }
 
+  creditCardRef = React.createRef() as any
+
   componentDidMount() {
+    Globals.actualizarCarrito = (item: Producto) => {
+      let carritoActual = this.state.carrito
+      console.log("Buscando item en carrito", item.idProducto)
+      let indexProductoCarrito = carritoActual.findIndex(element => element.producto.idProducto === item.idProducto)
+      if (indexProductoCarrito > -1) {
+        console.log("Se encontró el producto en el carrito...", indexProductoCarrito)
+        let producto = carritoActual[indexProductoCarrito]
+        producto.cantidad += 1
+        carritoActual[indexProductoCarrito] = producto
+        this.setState({ carrito: carritoActual })
+      } else {
+        let nuevoProducto = new ProductoCarrito(item, 1)
+        carritoActual.push(nuevoProducto)
+        this.setState({ carrito: carritoActual })
+      }
+    }
     this.props.navigation.setOptions({
       headerRight: () => (
         <Button onPress={() => { this.props.navigation.navigate('BarCodeScanner', {}) }} title="Escanear" />
@@ -67,10 +96,10 @@ class CarritoScreen extends React.Component<any, {
   }
 
   async obtenerRecomendaciones() {
-    console.log("Obteniendo recomendaciones...")
     let socio = Globals.socio
     if (socio !== null) {
       let idSocio = socio.idSocio
+      console.log("Obteniendo recomendaciones...", idSocio)
       let request = {
         method: 'POST',
         headers: {
@@ -83,6 +112,7 @@ class CarritoScreen extends React.Component<any, {
       const content = await rawResponse.json();
       let recomendaciones = content.productsInfo.productsInfo as Producto[]
       this.setState({ recomendaciones: recomendaciones })
+      console.log("Se obtuvieron recomendaciones...", idSocio)
     }
   }
 
@@ -161,6 +191,19 @@ class CarritoScreen extends React.Component<any, {
             {this.QtyButton({ title: "-", onPress: () => { this.handleQtyChangeOnItem(item, false) } })}
             <Text>{`Cantidad: ${item.cantidad}`}</Text>
             {this.QtyButton({ title: "+", onPress: () => { this.handleQtyChangeOnItem(item, true) } })}
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                right: 16,
+              }}
+              onPress={
+                () => {
+                  this.setState({ productoSeleccionado: item.producto })
+                }
+              }
+            >
+              <Icon name={item.producto.valoracion === 'y' ? "star" : "star-outline"} size={30} color={'black'} />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -268,8 +311,8 @@ class CarritoScreen extends React.Component<any, {
   }
 
   handleQtyChangeOnItem(item: ProductoCarrito, add: boolean) {
-    let itemIndex = this.state.data.indexOf(item);
-    let newData = this.state.data;
+    let itemIndex = this.state.carrito.indexOf(item);
+    let newData = this.state.carrito;
     if (add) {
       newData[itemIndex].cantidad = item.cantidad + 1
     } else if (newData[itemIndex].cantidad > 1) {
@@ -279,7 +322,7 @@ class CarritoScreen extends React.Component<any, {
     }
 
     this.setState({
-      data: newData
+      carrito: newData
     })
   }
 
@@ -324,8 +367,79 @@ class CarritoScreen extends React.Component<any, {
     );
   }
 
+  terminarPago() {
+    if (this.creditCardRef.current) {
+      const { error, data } = this.creditCardRef.current.submit();
+      console.log('ERROR: ', error);
+      console.log('CARD DATA: ', data);
+    }
+
+    this.registrarCompra()
+    this.setState({
+      mostrarModalPago: false,
+      carrito: new Array<ProductoCarrito>(),
+      pendientes: new Array<Producto>(),
+    })
+    Alert.alert('Aviso', 'La compra se registró exitosamente. Puede consultar el resumen en el apartado de cuenta.')
+  }
+
+  async registrarCompra() {
+    let carrito = this.state.carrito
+    let idsProductos = carrito.map((val) => val.producto.idProducto)
+    let cantidadesProductos = carrito.map((val) => val.cantidad)
+    let socio = Globals.socio!
+    let objeto = {
+      idSocio: socio.idSocio,
+      idProductos: idsProductos,
+      cantidades: cantidadesProductos
+    }
+
+    console.log("Registrando compra...")
+    let request = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(objeto)
+    };
+    console.log(objeto)
+    const rawResponse = await fetch(`${BaseUrl}/insert_hist`, request);
+    console.log(rawResponse)
+    const content = await rawResponse.json();
+    console.log(content)
+    if (content.success === true) {
+      console.log('Registro de compra exitoso.')
+    } else {
+      console.log('Falló el registro de compra.')
+    }
+  }
+
+  handleSubmit = () => {
+    if (this.creditCardRef.current) {
+      const { error, data } = this.creditCardRef.current.submit();
+      console.log('ERROR: ', error);
+      console.log('CARD DATA: ', data);
+    }
+  }
+
+  async actualizarCalificacion(idProducto: string, rating: number) {
+    console.log("Actualizando calificacion...", idProducto, rating)
+    let request = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ idProducto: idProducto, idSocio: Globals.socio!.idSocio, rating: rating })
+    };
+    const rawResponse = await fetch(`${BaseUrl}/insert_rating`, request);
+    console.log(rawResponse)
+    console.log("Termino calificacion...")
+  }
+
   render() {
-    let totalCompra = this.state.data.length > 0 ? this.state.data
+    let totalCompra = this.state.carrito.length > 0 ? this.state.carrito
       .map((item) => { return item.cantidad * item.producto.precioUnitario })
       .reduce((prevValue, currentValue, _) => { return prevValue + currentValue })
       .toFixed(2) : 0.00;
@@ -350,7 +464,7 @@ class CarritoScreen extends React.Component<any, {
             style={{
               width: '100%'
             }}
-            data={this.state.data}
+            data={this.state.carrito}
             renderItem={item => this.renderItemComponent(item.item)}
             keyExtractor={item => item.producto.idProducto}
             ItemSeparatorComponent={this.ItemSeparator}
@@ -416,6 +530,14 @@ class CarritoScreen extends React.Component<any, {
 
           <TouchableOpacity
             style={this.styles.pagarBtn}
+            onPress={() => {
+              if (this.state.carrito.length > 0) {
+                this.setState({ mostrarModalPago: true })
+              } else {
+                Alert.alert("Aviso", "No tiene productos en su carrito de compras.")
+              }
+
+            }}
           >
             <Text
               style={{
@@ -430,6 +552,191 @@ class CarritoScreen extends React.Component<any, {
           </TouchableOpacity>
 
         </View>
+
+        <Modal
+          visible={this.state.productoSeleccionado !== null}
+          transparent={true}
+        >
+          <View
+            style={{
+              height: '100%',
+              backgroundColor: 'rgba(52, 52, 52, 0.8)',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <View
+              style={{
+                height: 200,
+                width: 200,
+                backgroundColor: 'white',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 50,
+                  backgroundColor: 'gray',
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => this.setState({ calificacion: 1 })}
+                >
+                  <Icon name={this.state.calificacion >= 1 ? "star" : "star-outline"} size={30} color={'black'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({ calificacion: 2 })}
+                >
+                  <Icon name={this.state.calificacion >= 2 ? "star" : "star-outline"} size={30} color={'black'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({ calificacion: 3 })}
+                >
+                  <Icon name={this.state.calificacion >= 3 ? "star" : "star-outline"} size={30} color={'black'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({ calificacion: 4 })}
+                >
+                  <Icon name={this.state.calificacion >= 4 ? "star" : "star-outline"} size={30} color={'black'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.setState({ calificacion: 5 })}
+                >
+                  <Icon name={this.state.calificacion >= 5 ? "star" : "star-outline"} size={30} color={'black'} />
+                </TouchableOpacity>
+              </View>
+
+              <PrimaryButton
+                text={"Calificar"}
+                style={{
+                  margin: 8
+                }}
+                onPress={
+                  () => {
+                    if (this.state.calificacion! > 0) {
+                      let carrito = this.state.carrito
+                      let indexProducto = carrito.findIndex((value) => value.producto.idProducto == this.state.productoSeleccionado!.idProducto)
+                      let productoCarrito = carrito[indexProducto]
+                      productoCarrito.producto.valoracion = 'y'
+                      carrito[indexProducto] = productoCarrito
+                      this.actualizarCalificacion(this.state.productoSeleccionado!.idProducto, this.state.calificacion!)
+                      this.setState({ calificacion: 0, productoSeleccionado: null, carrito: carrito })
+                    } else {
+                      Alert.alert("Aviso", "Debe otorgar una calificación.")
+                    }
+                  }
+                }
+              />
+              <SecondaryButton text={"Cancelar"}
+                onPress={() => this.setState({ calificacion: 0, productoSeleccionado: null })}
+              />
+
+            </View>
+
+          </View>
+
+        </Modal>
+
+
+        <Modal
+          visible={this.state.mostrarModalPago}
+          animationType={'fade'}
+          transparent={true}
+        >
+
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(52, 52, 52, 0.8)',
+            }}
+          >
+
+            <View
+              style={{
+                width: '90%',
+                height: '90%',
+                backgroundColor: 'white'
+              }}
+            >
+
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 20,
+                  padding: 8,
+                  marginTop: 16,
+                }}
+              >
+                {'Introduce tus datos de pago.'}
+              </Text>
+
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 18,
+                  padding: 8,
+                  marginTop: 16,
+                }}
+              >
+                {`Total a pagar:`}
+              </Text>
+
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  padding: 8,
+                  marginTop: 16,
+                }}
+              >
+                {`$${totalCompra} MXN`}
+              </Text>
+
+              <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={20}
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 300,
+                }}
+              >
+                <CreditCard
+                  ref={this.creditCardRef}
+                  onValidStateChange={(isValid) => console.log("IsValid: ", isValid)}
+                />
+              </KeyboardAvoidingView>
+
+              <TouchableOpacity
+                style={this.styles.pagarBtn}
+                onPress={() => this.terminarPago()}
+              >
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  {"Pagar"}
+                </Text>
+              </TouchableOpacity>
+
+            </View>
+
+          </View>
+
+        </Modal>
+
       </View>
     );
   }
