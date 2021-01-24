@@ -40,7 +40,7 @@ class RegistroScreen extends Component {
                 edad,
                 this.state.sexo,
                 this.state.correo,
-                this.state.clave,
+                Globals.hashFunc(this.state.clave),
                 ""
             );
             this.registrar(socio)

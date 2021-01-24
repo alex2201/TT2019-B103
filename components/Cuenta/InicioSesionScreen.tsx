@@ -21,6 +21,7 @@ class InicioSesionScreen extends Component {
     }
 
     async iniciarSesion(correo: string, clave: string) {
+        let claveHash = Globals.hashFunc(clave)
         console.log("Loggin in...")
         let request = {
             method: 'POST',
@@ -28,7 +29,7 @@ class InicioSesionScreen extends Component {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: correo, passwd: clave })
+            body: JSON.stringify({ email: correo, passwd: claveHash })
         };
         const rawResponse = await fetch(`${BaseUrl}/login`, request);
         console.log(rawResponse)
