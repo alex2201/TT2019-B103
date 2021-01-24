@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Button,
 } from 'react-native';
+import AsyncImageAnimated from 'react-native-async-image-animated';
 import CreditCard from 'react-native-credit-card-form-ui';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BaseUrl from '../BaseUrl';
@@ -20,22 +21,22 @@ import Producto from './Model/Producto';
 import ProductoCarrito from './Model/ProductoCarrito';
 
 let productosPrueba: ProductoCarrito[] = [
-  new ProductoCarrito(new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "y"), 1),
-  new ProductoCarrito(new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "y"), 1),
-  new ProductoCarrito(new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n"), 1),
+  new ProductoCarrito(new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "y", null), 1),
+  new ProductoCarrito(new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "y", null), 1),
+  new ProductoCarrito(new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n", null), 1),
 ];
 let productosPendientesPrueba: Producto[] = [
-  new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("3", "Producto 3", 80.50, 23, "Generica", "Categoría", "n"),
-  new Producto("8", "Producto 8", 150.50, 23, "Generica", "Categoría", "n"),
+  new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("3", "Producto 3", 80.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("8", "Producto 8", 150.50, 23, "Generica", "Categoría", "n", null),
 ];
 let productosRecomendacionesPrueba: Producto[] = [
-  new Producto("1", "Producto 1 con un nmbre largo", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("3", "Producto 3", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("4", "Producto 4", 50.50, 23, "Generica", "Categoría", "n"),
-  new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n"),
+  new Producto("1", "Producto 1 con un nmbre largo", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("3", "Producto 3", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("4", "Producto 4", 50.50, 23, "Generica", "Categoría", "n", null),
+  new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n", null),
 ];
 
 class CarritoScreen extends React.Component<any, {
@@ -51,7 +52,7 @@ class CarritoScreen extends React.Component<any, {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
-      carrito: new Array<ProductoCarrito>(),
+      carrito: productosPrueba,//new Array<ProductoCarrito>(),
       recomendaciones: new Array<Producto>(),
       pendientes: new Array<Producto>(),
       selectedIndex: 0,
@@ -161,13 +162,24 @@ class CarritoScreen extends React.Component<any, {
             width: "25%",
           }}
         >
-          <Image
-            source={require('../../resources/no-imagen-producto.jpg')}
+          <AsyncImageAnimated
+            source={{
+              uri: 'https://i.imgur.com/R5TraVR.png'
+            }}
+            placeholderColor={'#cfd8dc'}
+            placeholderSource={require('../../resources/no-imagen-producto.jpg')}
             style={{
               height: "100%",
               width: "100%",
             }}
           />
+          {/* <Image
+            source={require('../../resources/no-imagen-producto.jpg')}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          /> */}
         </View>
 
         <View
@@ -226,13 +238,24 @@ class CarritoScreen extends React.Component<any, {
             width: "25%",
           }}
         >
-          <Image
-            source={require('../../resources/no-imagen-producto.jpg')}
+          <AsyncImageAnimated
+            source={{
+              uri: item.img ?? ""
+            }}
+            placeholderColor={'#cfd8dc'}
+            placeholderSource={require('../../resources/no-imagen-producto.jpg')}
             style={{
               height: "100%",
               width: "100%",
             }}
           />
+          {/* <Image
+            source={require('../../resources/no-imagen-producto.jpg')}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          /> */}
         </View>
 
         <View
@@ -274,13 +297,24 @@ class CarritoScreen extends React.Component<any, {
               height: 50,
             }}
           >
-            <Image
+            <AsyncImageAnimated
+            source={{
+              uri: item.img ?? ""
+            }}
+            placeholderColor={'#cfd8dc'}
+            placeholderSource={require('../../resources/no-imagen-producto.jpg')}
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          />
+            {/* <Image
               source={require('../../resources/no-imagen-producto.jpg')}
               style={{
                 height: "100%",
                 width: "100%",
               }}
-            />
+            /> */}
           </View>
 
           <View>

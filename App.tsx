@@ -19,6 +19,10 @@ import InicioSesionNavigation from './components/Cuenta/InicioSesionNavigation';
 import Globals from './components/Globals';
 import TabBarPrincipal from './components/TabBarController/TabBarPrincipal';
 import Socio from './model/Socio';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 class App extends Component<any, { socio: Socio | null }> {
 
