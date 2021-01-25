@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import GlobalStyles from './GlobalStyles';
 
-const PrimaryButton = (props) => {
+const PrimaryButton = (props: any) => {
     return (<TouchableOpacity
         style={[GlobalStyles.primaryBtnContainer, props.style]}
         onPress={props.onPress}

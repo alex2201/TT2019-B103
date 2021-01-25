@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ToastAndroid } from 'react-native';
 import Socio from '../../model/Socio';
 import AppInternalStorageKey from '../AppInternalStorageKey';
 import PrimaryButton from '../PrimaryButton';
@@ -41,6 +41,8 @@ class InicioSesionScreen extends Component {
             if (Globals.setSocio !== null) {
                 Globals.setSocio(socio)
             }
+        } else {
+            Alert.alert("Aviso", "No se encontró el usuario o la contraseña es incorrecta.")
         }
     }
 

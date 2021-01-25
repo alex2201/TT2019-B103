@@ -15,6 +15,7 @@ import CreditCard from 'react-native-credit-card-form-ui';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BaseUrl from '../BaseUrl';
 import Globals from '../Globals';
+import GlobalStyles from '../GlobalStyles';
 import PrimaryButton from '../PrimaryButton';
 import SecondaryButton from '../SecondaryButton';
 import Producto from './Model/Producto';
@@ -52,7 +53,7 @@ class CarritoScreen extends React.Component<any, {
   constructor(props: {} | Readonly<{}>) {
     super(props);
     this.state = {
-      carrito: productosPrueba,//new Array<ProductoCarrito>(),
+      carrito: new Array<ProductoCarrito>(),
       recomendaciones: new Array<Producto>(),
       pendientes: new Array<Producto>(),
       selectedIndex: 0,
@@ -298,16 +299,16 @@ class CarritoScreen extends React.Component<any, {
             }}
           >
             <AsyncImageAnimated
-            source={{
-              uri: item.img ?? ""
-            }}
-            placeholderColor={'#cfd8dc'}
-            placeholderSource={require('../../resources/no-imagen-producto.jpg')}
-            style={{
-              height: "100%",
-              width: "100%",
-            }}
-          />
+              source={{
+                uri: item.img ?? ""
+              }}
+              placeholderColor={'#cfd8dc'}
+              placeholderSource={require('../../resources/no-imagen-producto.jpg')}
+              style={{
+                height: "100%",
+                width: "100%",
+              }}
+            />
             {/* <Image
               source={require('../../resources/no-imagen-producto.jpg')}
               style={{
@@ -348,7 +349,11 @@ class CarritoScreen extends React.Component<any, {
     let itemIndex = this.state.carrito.indexOf(item);
     let newData = this.state.carrito;
     if (add) {
-      newData[itemIndex].cantidad = item.cantidad + 1
+      if (this.state.carrito.reduce((prev, x) => prev + x.cantidad, 0) < 20) {
+        newData[itemIndex].cantidad = item.cantidad + 1
+      } else {
+        Alert.alert("Aviso", "No puede agregar más de 20 artículos a su carrito.")
+      }
     } else if (newData[itemIndex].cantidad > 1) {
       newData[itemIndex].cantidad = item.cantidad - 1
     } else {
@@ -614,7 +619,6 @@ class CarritoScreen extends React.Component<any, {
                   justifyContent: 'center',
                   alignItems: 'center',
                   height: 50,
-                  backgroundColor: 'gray',
                 }}
               >
                 <TouchableOpacity
@@ -644,11 +648,8 @@ class CarritoScreen extends React.Component<any, {
                 </TouchableOpacity>
               </View>
 
-              <PrimaryButton
-                text={"Calificar"}
-                style={{
-                  margin: 8
-                }}
+              <TouchableOpacity
+                style={GlobalStyles.primaryBtnContainer}
                 onPress={
                   () => {
                     if (this.state.calificacion! > 0) {
@@ -664,10 +665,26 @@ class CarritoScreen extends React.Component<any, {
                     }
                   }
                 }
-              />
-              <SecondaryButton text={"Cancelar"}
-                onPress={() => this.setState({ calificacion: 0, productoSeleccionado: null })}
-              />
+              >
+                <Text
+                  style={GlobalStyles.primaryBtnText}
+                >
+                  {"Calificar"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={GlobalStyles.secondaryBtnContainer}
+                onPress={() => {
+                  this.setState({ calificacion: 0, productoSeleccionado: null })
+                }}
+              >
+                <Text
+                  style={GlobalStyles.secondaryBtnText}
+                >
+                  {"Cancelar"}
+                </Text>
+              </TouchableOpacity>
 
             </View>
 
