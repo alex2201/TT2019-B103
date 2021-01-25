@@ -6,7 +6,6 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Image,
   StyleSheet,
   Button,
 } from 'react-native';
@@ -16,29 +15,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import BaseUrl from '../BaseUrl';
 import Globals from '../Globals';
 import GlobalStyles from '../GlobalStyles';
-import PrimaryButton from '../PrimaryButton';
-import SecondaryButton from '../SecondaryButton';
 import Producto from './Model/Producto';
 import ProductoCarrito from './Model/ProductoCarrito';
+import Geolocation from '@react-native-community/geolocation';
 
-let productosPrueba: ProductoCarrito[] = [
-  new ProductoCarrito(new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "y", null), 1),
-  new ProductoCarrito(new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "y", null), 1),
-  new ProductoCarrito(new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n", null), 1),
-];
-let productosPendientesPrueba: Producto[] = [
-  new Producto("1", "Producto 1", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("3", "Producto 3", 80.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("8", "Producto 8", 150.50, 23, "Generica", "Categoría", "n", null),
-];
-let productosRecomendacionesPrueba: Producto[] = [
-  new Producto("1", "Producto 1 con un nmbre largo", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("2", "Producto 2", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("3", "Producto 3", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("4", "Producto 4", 50.50, 23, "Generica", "Categoría", "n", null),
-  new Producto("5", "Producto 5", 50.50, 23, "Generica", "Categoría", "n", null),
-];
 
 class CarritoScreen extends React.Component<any, {
   carrito: ProductoCarrito[],
@@ -85,7 +65,10 @@ class CarritoScreen extends React.Component<any, {
     }
     this.props.navigation.setOptions({
       headerRight: () => (
-        <Button onPress={() => { this.props.navigation.navigate('BarCodeScanner', {}) }} title="Escanear" />
+        <Button onPress={() => {
+          Geolocation.getCurrentPosition(info => console.log(info));
+          this.props.navigation.navigate('BarCodeScanner', {})
+        }} title="Escanear" />
       ),
     });
     this.props.navigation.addListener(
@@ -95,6 +78,8 @@ class CarritoScreen extends React.Component<any, {
         this.obtenerRecomendaciones()
       }
     );
+
+    Geolocation.requestAuthorization()
   }
 
   async obtenerRecomendaciones() {
@@ -288,7 +273,7 @@ class CarritoScreen extends React.Component<any, {
         }}
       >
         <TouchableOpacity
-          onPress={(e) => {
+          onPress={() => {
             this.handleRecomendacionPress(item)
           }}
         >
@@ -357,7 +342,7 @@ class CarritoScreen extends React.Component<any, {
     } else if (newData[itemIndex].cantidad > 1) {
       newData[itemIndex].cantidad = item.cantidad - 1
     } else {
-      newData = newData.filter((x, index, y) => { return index != itemIndex; });
+      newData = newData.filter((x, index) => { return index != itemIndex; });
     }
 
     this.setState({
