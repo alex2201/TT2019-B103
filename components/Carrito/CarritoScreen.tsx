@@ -150,7 +150,7 @@ class CarritoScreen extends React.Component<any, {
         >
           <AsyncImageAnimated
             source={{
-              uri: 'https://i.imgur.com/R5TraVR.png'
+              uri: item.producto.img ?? ""
             }}
             placeholderColor={'#cfd8dc'}
             placeholderSource={require('../../resources/no-imagen-producto.jpg')}
@@ -174,9 +174,9 @@ class CarritoScreen extends React.Component<any, {
             padding: 15,
           }}
         >
-          <Text style={this.styles.titulo}>{item.producto.nombre}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Código: ${item.producto.idProducto}`}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Precio: $${item.producto.precioUnitario.toFixed(2)} MXN`}</Text>
+          <Text numberOfLines={2} style={this.styles.titulo}>{item.producto.nombre}</Text>
+          <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`Código: ${item.producto.idProducto}`}</Text>
+          <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`Precio: $${item.producto.precioUnitario.toFixed(2)} MXN`}</Text>
           <View
             style={{
               marginTop: 5,
@@ -250,10 +250,10 @@ class CarritoScreen extends React.Component<any, {
             padding: 15,
           }}
         >
-          <Text style={this.styles.titulo}>{item.nombre}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Código: ${item.idProducto}`}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Precio: $${item.precioUnitario.toFixed(2)} MXN`}</Text>
-          <Text style={{ marginBottom: 5 }}>{`Sección: ${item.nombreSubCat}`}</Text>
+          <Text numberOfLines={2} style={this.styles.titulo}>{item.nombre}</Text>
+          <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`Código: ${item.idProducto}`}</Text>
+          <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`Precio: $${item.precioUnitario.toFixed(2)} MXN`}</Text>
+          <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`Sección: ${item.nombreSubCat}`}</Text>
 
         </View>
       </View>
@@ -304,8 +304,8 @@ class CarritoScreen extends React.Component<any, {
           </View>
 
           <View>
-            <Text style={this.styles.tituloRecomendacion} numberOfLines={2} >{item.nombre}</Text>
-            <Text style={{ marginBottom: 5 }}>{`$${item.precioUnitario.toFixed(2)} MXN`}</Text>
+            <Text numberOfLines={2} style={this.styles.tituloRecomendacion}>{item.nombre}</Text>
+            <Text numberOfLines={1}style={{ marginBottom: 5 }}>{`$${item.precioUnitario.toFixed(2)} MXN`}</Text>
           </View>
         </TouchableOpacity>
       </View>
