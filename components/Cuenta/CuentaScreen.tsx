@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Socio from '../../model/Socio';
 import AppInternalStorageKey from '../AppInternalStorageKey';
@@ -96,6 +96,30 @@ class CuentaScreen extends Component<any, { socio: Socio | null }> {
             }}
             onPress={() => this.cerrarSesion()}
           />
+
+        </View>
+        <View
+          style={{
+            flexGrow: 1
+          }}
+        >
+
+          <TouchableOpacity
+          style={{
+            position: 'absolute',
+            bottom: 16,
+            width: '100%'
+          }}
+            onPress={() => this.props.navigation.navigate("Terminos", {})}
+          >
+            <Text
+              style={{
+                color: 'red',
+                textAlign: 'center',
+                width: '100%'
+              }}
+            >{'Terminos y condiciones de uso'}</Text>
+          </TouchableOpacity>
 
         </View>
 

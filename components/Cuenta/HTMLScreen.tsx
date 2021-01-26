@@ -38,7 +38,7 @@ class HTMLScreen extends Component<any, {
         const rawResponse = await fetch(`${BaseUrl}/api/v1/receipt2/`, request);
         let content = await rawResponse.json()
         this.setState({ticketurl: content.Ticket})
-        console.log('PDF obtenido con éxito...')
+        console.log('PDF obtenido con éxito...', content)
     }
 
     render() {

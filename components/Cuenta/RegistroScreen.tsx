@@ -50,6 +50,7 @@ class RegistroScreen extends Component {
     }
 
     async registrar(socio: Socio) {
+        console.log("Registrando", socio)
         const rawResponse = await fetch(`${BaseUrl}/register`, {
             method: 'POST',
             headers: {
@@ -224,7 +225,9 @@ class RegistroScreen extends Component {
                                 tintColor={'lightgray'}
                                 onTintColor={'black'}
                             />
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                            onPress={()=>this.props.navigation.navigate("Terminos", {})}
+                            >
                                 <Text
                                     style={{
                                         color: 'red'

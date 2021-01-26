@@ -432,7 +432,7 @@ class CarritoScreen extends React.Component<any, {
     console.log(rawResponse)
     const content = await rawResponse.json();
     console.log(content)
-    if (content.success === true) {
+    if (content.ok === true) {
       console.log('Registro de compra exitoso.')
     } else {
       console.log('Falló el registro de compra.')

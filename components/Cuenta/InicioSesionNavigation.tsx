@@ -4,6 +4,7 @@ import RegistroScreen from './RegistroScreen';
 import InicioSesionScreen from './InicioSesionScreen';
 import CuentaScreen from './CuentaScreen';
 import { NavigationContainer } from '@react-navigation/native';
+import TerminosScreen from '../TerminosScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ class InicioSesionNavigation extends React.Component {
           <Stack.Screen name="InicioSesion" component={InicioSesionScreen} options={{ title: 'InicioSesion', gestureEnabled: false, }} />
           <Stack.Screen name="Registro" component={RegistroScreen} options={{ title: 'Registro', gestureEnabled: false, }} />
           <Stack.Screen name="Cuenta" component={CuentaScreen} options={{ title: 'Cuenta', gestureEnabled: false, }} />
+          <Stack.Screen name="Terminos" component={TerminosScreen} options={{ title: 'Terminos', gestureEnabled: true, }} />
         </Stack.Navigator>
       </NavigationContainer>
     );

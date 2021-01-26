@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import EditarCuentaScreen from './EditarCuentaScreen';
 import HistorialScreen from './HistorialScreen';
 import HTMLScreen from './HTMLScreen';
+import TerminosScreen from '../TerminosScreen';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ class CuentaNavigation extends React.Component {
           <Stack.Screen name="EditarCuenta" component={EditarCuentaScreen} options={{ title: 'Editar Cuenta', gestureEnabled: false, }} />
           <Stack.Screen name="Historial" component={HistorialScreen} options={{ title: 'Historial', gestureEnabled: true, }} />
           <Stack.Screen name="HTML" component={HTMLScreen} options={{ title: 'Ticket', gestureEnabled: true, }} />
+          <Stack.Screen name="Terminos" component={TerminosScreen} options={{ title: 'Terminos', gestureEnabled: true, }} />
         </Stack.Navigator>
       </NavigationContainer>
     );
