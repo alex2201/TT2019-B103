@@ -1,6 +1,6 @@
 import SegmentedControl from '@react-native-community/segmented-control';
 import * as React from 'react';
-import { Alert, KeyboardAvoidingView, Modal, Platform } from 'react-native';
+import { Alert, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform } from 'react-native';
 import {
   Text,
   View,
@@ -19,6 +19,23 @@ import Producto from './Model/Producto';
 import ProductoCarrito from './Model/ProductoCarrito';
 import Geolocation from '@react-native-community/geolocation';
 
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg: number) {
+  return deg * (Math.PI/180)
+}
 
 class CarritoScreen extends React.Component<any, {
   carrito: ProductoCarrito[],
@@ -44,9 +61,11 @@ class CarritoScreen extends React.Component<any, {
     }
   }
 
+  localizaciones: [number, number][] = []
+
   creditCardRef = React.createRef() as any
 
-  componentDidMount() {
+  async componentDidMount() {
     Globals.actualizarCarrito = (item: Producto) => {
       let carritoActual = this.state.carrito
       console.log("Buscando item en carrito", item.idProducto)
@@ -66,8 +85,19 @@ class CarritoScreen extends React.Component<any, {
     this.props.navigation.setOptions({
       headerRight: () => (
         <Button onPress={() => {
-          Geolocation.getCurrentPosition(info => console.log(info));
-          this.props.navigation.navigate('BarCodeScanner', {})
+          Geolocation.getCurrentPosition((info: any) => {
+            console.log(info)
+            let {latitude, longitude} = info.coords
+            let distancias = this.localizaciones.map((loc) => getDistanceFromLatLonInKm(loc[0], loc[1], latitude, longitude))
+            console.log(latitude, longitude)
+            console.log(distancias)
+            if (distancias.reduce((prev, val) => prev || val <= 0.1, false) || true) {
+              this.props.navigation.navigate('BarCodeScanner', {})
+            } else {
+              Alert.alert("Aviso", "Parece ser que no te encuentras cerca alguna tienda.")
+            }
+            
+          });
         }} title="Escanear" />
       ),
     });
@@ -79,7 +109,38 @@ class CarritoScreen extends React.Component<any, {
       }
     );
 
-    Geolocation.requestAuthorization()
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Permiso localización CarritoInteligente",
+          message:
+            "Necesitamos acceder a tu ubicación para encontrar la tienda más cercana.",
+          buttonNeutral: "Después",
+          buttonNegative: "No",
+          buttonPositive: "Sí"
+        }
+      );
+    } else {
+      Geolocation.requestAuthorization()
+    }
+
+    this.obtenerLocalizacionTiendas()
+  }
+
+  async obtenerLocalizacionTiendas() {
+    let request = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ })
+    };
+    const rawResponse = await fetch(`${BaseUrl}/get_coords`, request);
+    const content = await rawResponse.json();
+    this.localizaciones = content.coords
+    console.log(this.localizaciones)
   }
 
   async obtenerRecomendaciones() {
@@ -305,7 +366,7 @@ class CarritoScreen extends React.Component<any, {
 
           <View>
             <Text numberOfLines={2} style={this.styles.tituloRecomendacion}>{item.nombre}</Text>
-            <Text numberOfLines={1}style={{ marginBottom: 5 }}>{`$${item.precioUnitario.toFixed(2)} MXN`}</Text>
+            <Text numberOfLines={1} style={{ marginBottom: 5 }}>{`$${item.precioUnitario.toFixed(2)} MXN`}</Text>
           </View>
         </TouchableOpacity>
       </View>
